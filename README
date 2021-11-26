@@ -1,7 +1,7 @@
 
 # Create NFS server
 oc create -f nfs-server.yaml
-// Image used: quay.io/openshifttest/nfs-server:multiarch
+
 
 # Create a NFS service on top of the NFS server
 oc create -f nfs_service.yaml
@@ -27,7 +27,7 @@ oc create -f nfs_pvc.yaml
 
 # Create  a app accessing the PVC
 oc create -f nfs_busybox.yaml
- //Image used: quay.io/openshifttest/busybox:multiarch
+
 
 # Verify NFS mount
 oc rsh po/<busybox podname> 
