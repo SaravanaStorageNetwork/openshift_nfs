@@ -1,0 +1,34 @@
+
+# Create NFS server
+oc create -f nfs-server.yaml
+// Image used: quay.io/openshifttest/nfs-server:multiarch
+
+# Create a NFS service on top of the NFS server
+oc create -f nfs_service.yaml
+// Note down the IP address of the NFS service
+
+--
+# Create the storageclass
+oc create -f nfs_storageclass.yaml
+
+# Patch the storage class as default
+oc patch storageclass nfs-server  -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'
+
+# Patch any other storage class which are set as default to "false"
+oc patch storageclass <other storage class> -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "false"}}}'
+--
+
+# Create a PV
+oc create -f nfs_pv.yaml
+// server: <Updated to nfs service IP address created above>
+
+# Create a PVC
+oc create -f nfs_pvc.yaml
+
+# Create  a app accessing the PVC
+oc create -f nfs_busybox.yaml
+ //Image used: quay.io/openshifttest/busybox:multiarch
+
+# Verify NFS mount
+oc rsh po/<busybox podname> 
+ # mount | grep nfs
